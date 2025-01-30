@@ -6,9 +6,9 @@ import json
 import requests
 
 # Credenciales de acceso
-API_KEY = "bg_c9f10de1be92d3ca1abbb66ff27e02ef"
-API_SECRET = "282852162291061fa30feabf99f61c40334b5b4e88f0ff74cd1ed117309069f2"
-API_PASSPHRASE = "4872931650"
+API_KEY = ""
+API_SECRET = ""
+API_PASSPHRASE = ""
 
 
 def get_timestamp():
