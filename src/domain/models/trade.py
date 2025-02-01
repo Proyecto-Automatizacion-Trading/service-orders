@@ -3,10 +3,11 @@ from datetime import datetime
 from ..enums.order_type import OrderType
 from ..enums.position_side import PositionSide
 from dataclasses import asdict
+from pydantic import BaseModel
 
 
 @dataclass
-class Trade:
+class Trade(BaseModel):
     symbol: str
     productType: str
     marginMode: str
@@ -19,11 +20,3 @@ class Trade:
     clientOid: str
     leverage: str
     createdTime: datetime
-
-    def dict(self):
-        data = asdict(self)  # Convertir el objeto en un diccionario
-        data["createdTime"] = self.createdTime.isoformat()  # Convertir el objeto datetime en una cadena de texto
-        # Convertir enums a sus valores en string
-        data["tradeSide"] = self.tradeSide.value
-        data["side"] = self.side.value
-        return data

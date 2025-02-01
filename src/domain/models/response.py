@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from pydantic import BaseModel
 
 
 class ClientResponse:
@@ -8,7 +9,7 @@ class ClientResponse:
 
 
 @dataclass
-class Response:
+class Response(BaseModel):
     statusCode: int
     code: str
     msg: str
