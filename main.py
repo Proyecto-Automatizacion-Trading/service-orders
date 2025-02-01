@@ -4,18 +4,19 @@ import hashlib
 import base64
 import json
 import requests
+from config import SECRETS
 
 # Credenciales de acceso
-API_KEY = ""
-API_SECRET = ""
-API_PASSPHRASE = ""
+API_KEY = SECRETS["API_KEY"]
+API_SECRET = SECRETS["API_SECRET"]
+API_PASSPHRASE = SECRETS["API_PASSPHRASE"]
 
 
 def get_timestamp():
     return str(int(time.time() * 1000))
 
 
-def generate_signature(timestamp, method, request_path, body, secret):
+def generate_signature(timestamp, method, request_path, body, secret) -> str:
     message = timestamp + method + request_path + body
     signature = hmac.new(secret.encode(), message.encode(), hashlib.sha256).digest()
     return base64.b64encode(signature).decode()
@@ -27,7 +28,7 @@ order_data = {
     "productType": "USDT-FUTURES",
     "marginMode": "isolated",
     "marginCoin": "USDT",
-    "size": "398000",
+    "size": 398000,
     "side": "sell",  # Cambiado de "buy" a "sell"
     "tradeSide": "close",  # Cambiado de "close" a "open"
     "orderType": "market",
