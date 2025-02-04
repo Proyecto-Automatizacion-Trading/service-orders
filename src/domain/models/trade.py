@@ -13,8 +13,8 @@ class Trade(BaseModel):
     marginMode: str
     marginCoin: str
     size: float
-    side: PositionSide
-    tradeSide: OrderType
+    side: PositionSide  # Cambiado de "buy" a "sell"
+    tradeSide: OrderType  # Cambiado de "close" a "open"
     orderType: str
     timeInForceValue: str
     clientOid: str
