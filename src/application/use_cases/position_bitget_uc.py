@@ -3,13 +3,26 @@ from ...domain.models.trade import Trade
 from ...domain.models.response import Response
 from ...domain.models.InputDataTV import InputDataTV
 from datetime import datetime
+import json
+import time
+
+from ...infraestructure.adapters.bitget_auth import BitgetAuth
+from src.domain.constants.request_methods import RequestMethods
+from src.domain.constants.paths import Paths
+from ...infraestructure.adapters.connection_bitget import ConnectionBitget
 
 
 class PositionBitgetUC(PositionRepository):
-    async def open_position(self, trade_input: InputDataTV) -> Response:
-        trade = await self.create_json_trading(trade_input)
+    connection_bitget = ConnectionBitget()
 
-        return None
+    async def open_position(self, trade_input: InputDataTV, bitget_auth: BitgetAuth):
+        trade = await self.create_json_trading(trade_input)
+        body_trade = json.dumps(trade, separators=(",", ":"))
+        timestamp = await self.get_timestamp()
+        url = Paths.PATH_BITGET + Paths.REQUEST_PATH_FUTURES
+        headers = bitget_auth.generate_headers(timestamp, RequestMethods.POST, url, body_trade,
+                                               bitget_auth.get_credentials().get("API_SECRET"))
+        await self.connection_bitget.execute_operation(body_trade, headers, url)
 
     async def close_position(self, trade_input: InputDataTV) -> Response:
         pass
@@ -30,3 +43,7 @@ class PositionBitgetUC(PositionRepository):
             leverage=trade_input.leverage,
             createdTime=datetime.now()
         )
+
+    @staticmethod
+    async def get_timestamp() -> str:
+        return str(int(time.time() * 1000))
