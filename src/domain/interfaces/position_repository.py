@@ -12,5 +12,5 @@ class PositionRepository(ABC):
 
     # Método encargado de gestionar el cierre de una posición
     @abstractmethod
-    async def close_position(self, trade_input: InputDataTV) -> Response:
+    async def close_position(self, trade_input: InputDataTV, exchange_auth: ExchangeAuth) -> Response:
         pass

@@ -1,10 +1,8 @@
-from dataclasses import dataclass
 from pydantic import BaseModel
 from ..enums.order_type import OrderType
 from ..enums.position_side import PositionSide
 
 
-@dataclass
 class InputDataTV(BaseModel):
     symbol: str
     size: float

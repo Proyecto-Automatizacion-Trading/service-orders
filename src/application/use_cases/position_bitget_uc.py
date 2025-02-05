@@ -6,26 +6,32 @@ from datetime import datetime
 import json
 import time
 
-from ...infraestructure.adapters.bitget_auth import BitgetAuth
+from ...infrastructure.adapters.bitget_auth import BitgetAuth
 from src.domain.constants.request_methods import RequestMethods
 from src.domain.constants.paths import Paths
-from ...infraestructure.adapters.connection_bitget import ConnectionBitget
+from ...infrastructure.adapters.connection_bitget import ConnectionBitget
 
 
 class PositionBitgetUC(PositionRepository):
     connection_bitget = ConnectionBitget()
 
-    async def open_position(self, trade_input: InputDataTV, bitget_auth: BitgetAuth):
+    async def open_position(self, trade_input: InputDataTV, bitget_auth: BitgetAuth) -> Response:
         trade = await self.create_json_trading(trade_input)
-        body_trade = json.dumps(trade, separators=(",", ":"))
+        body_trade = json.dumps(trade.dict(), separators=(",", ":"))
         timestamp = await self.get_timestamp()
         url = Paths.PATH_BITGET + Paths.REQUEST_PATH_FUTURES
         headers = bitget_auth.generate_headers(timestamp, RequestMethods.POST, url, body_trade,
                                                bitget_auth.get_credentials().get("API_SECRET"))
-        await self.connection_bitget.execute_operation(body_trade, headers, url)
+        return await self.connection_bitget.execute_operation(body_trade, headers, url)
 
-    async def close_position(self, trade_input: InputDataTV) -> Response:
-        pass
+    async def close_position(self, trade_input: InputDataTV, bitget_auth: BitgetAuth) -> Response:
+        trade = await self.create_json_trading(trade_input)
+        body_trade = json.dumps(trade.dict(), separators=(",", ":"))
+        timestamp = await self.get_timestamp()
+        url = Paths.PATH_BITGET + Paths.REQUEST_PATH_FUTURES
+        headers = bitget_auth.generate_headers(timestamp, RequestMethods.POST, url, body_trade,
+                                               bitget_auth.get_credentials().get("API_SECRET"))
+        return await self.connection_bitget.execute_operation(body_trade, headers, url)
 
     @staticmethod
     async def create_json_trading(trade_input: InputDataTV) -> Trade:

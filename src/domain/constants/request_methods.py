@@ -1,8 +1,5 @@
 class RequestMethods:
-    @property
-    def GET(self) -> str:
-        return "GET"
-
-    @property
-    def POST(self) -> str:
-        return "POST"
+    GET = "GET"
+    POST = "POST"
+    DELETE = "DELETE"
+    PUT = "PUT"
