@@ -1,15 +1,14 @@
+import json
+
+from src.domain.constants.request_methods import RequestMethods
+from src.domain.constants.paths import Paths
 from ...domain.interfaces.position_repository import PositionRepository
 from ...domain.models.trade import Trade
 from ...domain.models.response import Response
 from ...domain.models.InputDataTV import InputDataTV
-from datetime import datetime
-import json
-import time
-
 from ...infrastructure.adapters.bitget_auth import BitgetAuth
-from src.domain.constants.request_methods import RequestMethods
-from src.domain.constants.paths import Paths
 from ...infrastructure.adapters.connection_bitget import ConnectionBitget
+from ...application.utilities.timeUtiliti import TimeUtiliti
 
 
 class PositionBitgetUC(PositionRepository):
@@ -17,17 +16,16 @@ class PositionBitgetUC(PositionRepository):
 
     async def open_position(self, trade_input: InputDataTV, bitget_auth: BitgetAuth) -> Response:
         trade = await self.create_json_trading(trade_input)
-        body_trade = json.dumps(trade.dict(), separators=(",", ":"))
-        timestamp = await self.get_timestamp()
+        body_trade = json.dumps(trade.model_dump(), separators=(",", ":"))
         url = Paths.PATH_BITGET + Paths.REQUEST_PATH_FUTURES
-        headers = bitget_auth.generate_headers(timestamp, RequestMethods.POST, url, body_trade,
+        headers = bitget_auth.generate_headers(RequestMethods.POST, url, body_trade,
                                                bitget_auth.get_credentials().get("API_SECRET"))
         return await self.connection_bitget.execute_operation(body_trade, headers, url)
 
     async def close_position(self, trade_input: InputDataTV, bitget_auth: BitgetAuth) -> Response:
         trade = await self.create_json_trading(trade_input)
-        body_trade = json.dumps(trade.dict(), separators=(",", ":"))
-        timestamp = await self.get_timestamp()
+        body_trade = json.dumps(trade.model_dump(), separators=(",", ":"))
+        timestamp = TimeUtiliti.get_timestamp()
         url = Paths.PATH_BITGET + Paths.REQUEST_PATH_FUTURES
         headers = bitget_auth.generate_headers(timestamp, RequestMethods.POST, url, body_trade,
                                                bitget_auth.get_credentials().get("API_SECRET"))
@@ -45,11 +43,5 @@ class PositionBitgetUC(PositionRepository):
             tradeSide=trade_input.tradeSide,
             orderType="market",
             timeInForceValue="normal",
-            clientOid=str(int(datetime.now().timestamp() * 1000)),
             leverage=trade_input.leverage,
-            createdTime=datetime.now()
         )
-
-    @staticmethod
-    async def get_timestamp() -> str:
-        return str(int(time.time() * 1000))
