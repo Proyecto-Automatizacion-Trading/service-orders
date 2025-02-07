@@ -40,9 +40,9 @@ async def tradingview_webhook_alert(
         bitget_auth: BitgetAuth = Depends(get_bitget_auth)
 ):
     try:
-        if alert.tradeSide == OrderType.OPEN:
+        if alert.tradeSide == OrderType.OPEN.value:
             return await position_bitget_uc.open_position(alert, bitget_auth)
-        elif alert.tradeSide == OrderType.CLOSE:
+        elif alert.tradeSide == OrderType.CLOSE.value:
             return await position_bitget_uc.close_position(alert, bitget_auth)
         else:
             raise HTTPException(

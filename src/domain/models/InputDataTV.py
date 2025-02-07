@@ -5,7 +5,7 @@ from ..enums.position_side import PositionSide
 
 class InputDataTV(BaseModel):
     symbol: str
-    size: float
-    side: PositionSide  # Cambiado de "buy" a "sell"
-    tradeSide: OrderType  # Cambiado de "close" a "open"
+    size: str
+    side: str  # Cambiado de "buy" a "sell"
+    tradeSide: str  # Cambiado de "close" a "open"
     leverage: str  # apalancamiento

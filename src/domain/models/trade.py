@@ -3,18 +3,19 @@ from ..enums.order_type import OrderType
 from ..enums.position_side import PositionSide
 from pydantic import BaseModel
 
+from ...application.utilities.timeUtility import TimeUtility
+
 
 class Trade(BaseModel):
     symbol: str
     productType: str
     marginMode: str
     marginCoin: str
-    size: float
-    side: PositionSide  # Cambiado de "buy" a "sell"
-    tradeSide: OrderType  # Cambiado de "close" a "open"
+    size: str
+    side: str  # Cambiado de "buy" a "sell"
+    tradeSide: str  # Cambiado de "close" a "open"
     orderType: str
     timeInForceValue: str
-    clientOid: str = str(int(datetime.datetime.now().timestamp() * 1000))
+    clientOid: str = TimeUtility.get_timestamp_datetime()
     leverage: str
-    createdTime: datetime = datetime.now()
 
