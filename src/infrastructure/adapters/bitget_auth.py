@@ -1,10 +1,14 @@
 import base64
 import hashlib
 import hmac
+
 from typing import Dict
+from config import SECRETS
 
 from ...domain.interfaces.exchange_auth import ExchangeAuth
-from config import SECRETS
+from ...application.utilities.timeUtiliti import TimeUtiliti
+
+
 
 
 class BitgetAuth(ExchangeAuth):
@@ -16,7 +20,7 @@ class BitgetAuth(ExchangeAuth):
         }
 
     def generate_signature(self, timestamp, method, request_path, body, secret) -> str:
-        message = timestamp + method + request_path + body
+        message = TimeUtiliti.get_timestamp() + method + request_path + body
         signature = hmac.new(secret.encode(), message.encode(), hashlib.sha256).digest()
         return base64.b64encode(signature).decode()
 

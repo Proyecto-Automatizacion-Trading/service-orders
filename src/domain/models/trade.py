@@ -14,5 +14,7 @@ class Trade(BaseModel):
     tradeSide: OrderType  # Cambiado de "close" a "open"
     orderType: str
     timeInForceValue: str
-    clientOid: str
+    clientOid: str = str(int(datetime.datetime.now().timestamp() * 1000))
     leverage: str
+    createdTime: datetime = datetime.now()
+
