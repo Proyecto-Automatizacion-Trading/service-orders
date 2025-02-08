@@ -1,64 +1,88 @@
-import time
-import hmac
-import hashlib
-import base64
-import json
-import requests
+import uvicorn
+from fastapi import FastAPI, Depends, HTTPException
+from src.domain.models.InputDataTV import InputDataTV
+from src.application.use_cases.position_bitget_uc import PositionBitgetUC
+from src.domain.enums.order_type import OrderType
+from src.infrastructure.adapters.bitget_auth import BitgetAuth
+from src.domain.models.response import Response
 
-# Credenciales de acceso
-API_KEY = ""
-API_SECRET = ""
-API_PASSPHRASE = ""
-
-
-def get_timestamp():
-    return str(int(time.time() * 1000))
+app = FastAPI(
+    title="Trading Algorítmico",
+    description="API para ejecutar ordenes de trading automático",
+    version="1.0.0"
+)
 
 
-def generate_signature(timestamp, method, request_path, body, secret):
-    message = timestamp + method + request_path + body
-    signature = hmac.new(secret.encode(), message.encode(), hashlib.sha256).digest()
-    return base64.b64encode(signature).decode()
+# Función de dependencia para crear la autenticación de Bitget
+def get_bitget_auth() -> BitgetAuth:
+    try:
+        return BitgetAuth()
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al inicializar BitgetAuth: {str(e)}"
+        )
 
 
-# Datos de la orden modificados
-order_data = {
-    "symbol": "PEPEUSDT",
-    "productType": "USDT-FUTURES",
-    "marginMode": "isolated",
-    "marginCoin": "USDT",
-    "size": "398000",
-    "side": "sell",  # Cambiado de "buy" a "sell"
-    "tradeSide": "close",  # Cambiado de "close" a "open"
-    "orderType": "market",
-    "timeInForceValue": "normal",  # Cambiado de "force" a "timeInForceValue"
-    "clientOid": str(int(time.time() * 1000)),
-    "leverage": "5"
-}
+# Función de dependencia para crear el caso de uso de posiciones
+def get_position_use_case(auth_bitget: BitgetAuth = Depends(get_bitget_auth)) -> PositionBitgetUC:
+    return PositionBitgetUC()
 
-# Convertir el JSON a string
-body = json.dumps(order_data, separators=(",", ":"))
 
-timestamp = get_timestamp()
-method = "POST"
-request_path = "/api/v2/mix/order/place-order"
+@app.post("/webhook/alert/tradingview/bitget/",
+          response_model=Response,
+          summary="Procesa alertas de TradingView para Bitget",
+          description="Recibe alertas de TradingView y ejecuta operaciones en Bitget"
+          )
+async def tradingview_webhook_alert(
+        alert: InputDataTV,
+        position_bitget_uc: PositionBitgetUC = Depends(get_position_use_case),
+        bitget_auth: BitgetAuth = Depends(get_bitget_auth)
+):
+    try:
+        if alert.tradeSide == OrderType.OPEN.value:
+            return await position_bitget_uc.open_position(alert, bitget_auth)
+        elif alert.tradeSide == OrderType.CLOSE.value:
+            return await position_bitget_uc.close_position(alert, bitget_auth)
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Operación Inválida: {alert.tradeSide}"
+            )
 
-signature = generate_signature(timestamp, method, request_path, body, API_SECRET)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error in tradingview_webhook_alert: {str(e)}"
+        )
 
-headers = {
-    "ACCESS-KEY": API_KEY,
-    "ACCESS-SIGN": signature,
-    "ACCESS-PASSPHRASE": API_PASSPHRASE,
-    "ACCESS-TIMESTAMP": timestamp,
-    "Content-Type": "application/json"
-}
 
-url = "https://api.bitget.com" + request_path
+@app.get("/health",
+         summary="Health check endpoint",
+         description="Verifica el estado del servicio")
+async def health_check():
+    return {
+        "status": "healthy",
+        "service": "trading-bot",
+        "version": "1.0.0"
+    }
 
-# Agregar manejo de errores
-try:
-    response = requests.post(url, headers=headers, data=body)
-    print(f"Status Code: {response.status_code}")
-    print(f"Response: {response.json()}")
-except Exception as e:
-    print(f"Error: {str(e)}")
+
+@app.get("/",
+         summary="Root endpoint",
+         description="Endpoint de bienvenida")
+async def root():
+    return {
+        "message": "Welcome to Trading Bot API",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True
+    )
