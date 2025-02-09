@@ -1,11 +1,9 @@
 from pydantic import BaseModel
-from ..enums.order_type import OrderType
-from ..enums.position_side import PositionSide
 
 
 class InputDataTV(BaseModel):
-    symbol: str
-    size: str
+    symbol: str  # Símbolo de la moneda
     side: str  # Cambiado de "buy" a "sell"
     tradeSide: str  # Cambiado de "close" a "open"
-    leverage: str  # apalancamiento
+    percentage: bool  # Porcentaje para abrir la orden
+    size: str  # Porcentaje para abrir la orden si es porcentaje, el tamaño de la orden si es tamaño

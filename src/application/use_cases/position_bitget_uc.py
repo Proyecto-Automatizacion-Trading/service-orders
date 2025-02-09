@@ -58,5 +58,4 @@ class PositionBitgetUC(PositionRepository):
             tradeSide=trade_input.tradeSide,
             orderType="market",
             timeInForceValue="normal",
-            leverage=trade_input.leverage,
         )
