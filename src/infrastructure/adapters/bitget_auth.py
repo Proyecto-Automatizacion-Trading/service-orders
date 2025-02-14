@@ -6,7 +6,6 @@ from typing import Dict
 from config import SECRETS
 
 from ...domain.interfaces.exchange_auth import ExchangeAuth
-from ...application.utilities.timeUtility import TimeUtility
 
 
 class BitgetAuth(ExchangeAuth):

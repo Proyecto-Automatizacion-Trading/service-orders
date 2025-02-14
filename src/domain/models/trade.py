@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from ...application.utilities.timeUtility import TimeUtility
-
 
 class Trade(BaseModel):
     symbol: str
@@ -13,4 +11,4 @@ class Trade(BaseModel):
     tradeSide: str  # Cambiado de "close" a "open"
     orderType: str
     timeInForceValue: str
-    clientOid: str = TimeUtility.get_timestamp_datetime()
+    clientOid: str

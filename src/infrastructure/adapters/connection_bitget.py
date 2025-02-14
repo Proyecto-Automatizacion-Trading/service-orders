@@ -7,7 +7,7 @@ from src.domain.models.response import Response
 
 
 class ConnectionBitget(ConnectionExchange):
-    async def execute_operation(self, body_order: json, headers: dict, url: str) -> Response:
+    async def execute_operation_bitget(self, body_order: json, headers: dict, url: str) -> Response:
         try:
             response = requests.post(url, headers=headers, data=body_order)
             print(f"Status Code: {response.status_code}")
