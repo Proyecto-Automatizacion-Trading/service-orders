@@ -5,7 +5,7 @@ from src.domain.models.InputDataTV import InputDataTV
 
 class Calculator(ABC):
     @abstractmethod
-    async def calculate(self, trade_input: InputDataTV):
+    async def calculate(self, trade_input: InputDataTV, balance: float):
         pass
 
     @abstractmethod
@@ -17,5 +17,5 @@ class Calculator(ABC):
         pass
 
     @abstractmethod
-    async def calculate_percentage(self) -> float:
+    async def calculate_percentage(self, percentage: float, balance: float) -> float:
         pass
