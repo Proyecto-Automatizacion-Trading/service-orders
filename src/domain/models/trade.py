@@ -6,7 +6,7 @@ class Trade(BaseModel):
     productType: str
     marginMode: str
     marginCoin: str
-    size: str
+    size: float
     side: str  # Cambiado de "buy" a "sell"
     tradeSide: str  # Cambiado de "close" a "open"
     orderType: str
