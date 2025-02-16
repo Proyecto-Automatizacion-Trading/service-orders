@@ -58,8 +58,7 @@ class PositionBitgetUC(PositionRepository):
             raise HTTPException(status_code=500, detail=f"Error in execute_operation: {str(e)}")
 
     async def open_position(self) -> Response:
-        if Validations.validate_enum(self.trade_input.side, PositionSide) and Validations.validate_enum(
-                self.trade_input.tradeSide, OrderType):
+        if self.validate_enums(self.trade_input):
             trade = await self.create_json_trading(self.trade_input)
             body_trade = SerializableUtility.serialize_json(trade.model_dump())
             url = PathsBitget.PATH_BITGET + PathsBitget.REQUEST_PATH_FUTURES
@@ -72,8 +71,7 @@ class PositionBitgetUC(PositionRepository):
             return Response(statusCode=400, data="Error in side or tradeSide", valid=False)
 
     async def close_position(self) -> Response:
-        if Validations.validate_enum(self.trade_input.side, PositionSide) and Validations.validate_enum(
-                self.trade_input.tradeSide, OrderType):
+        if self.validate_enums(self.trade_input):
             trade = await self.create_json_trading(self.trade_input)
             body_trade = SerializableUtility.serialize_json(trade.model_dump())
             url = PathsBitget.PATH_BITGET + PathsBitget.REQUEST_PATH_FUTURES
@@ -99,3 +97,8 @@ class PositionBitgetUC(PositionRepository):
             timeInForceValue="normal",
             clientOid=TimeUtility.get_timestamp_datetime(),
         )
+
+    @staticmethod
+    async def validate_enums(trade_input: InputDataTV) -> bool:
+        return Validations.validate_enum(trade_input.side, PositionSide) and Validations.validate_enum(
+            trade_input.tradeSide, OrderType)
