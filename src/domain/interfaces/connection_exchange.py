@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from ..models.trade import Trade
 from ..models.response import Response
-from ..constants.paths import Paths
+from ..constants.paths_bitget import PathsBitget
 
 import requests
 

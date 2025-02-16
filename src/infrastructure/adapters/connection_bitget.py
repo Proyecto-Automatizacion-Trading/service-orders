@@ -18,3 +18,14 @@ class ConnectionBitget(ConnectionExchange):
         except Exception as e:
             print(f"Error in execute_operation: {str(e)}")
             raise e
+
+    @staticmethod
+    async def get_balance_bitget(headers: dict, url: str) -> dict:
+        try:
+            response = requests.get(url, headers=headers)
+            print(f"Status Code: {response.status_code}")
+            print(f"Balance Bitget: {response.json()}")
+            return response.json()
+        except Exception as e:
+            print(f"Error in get_balance_bitget: {str(e)}")
+            raise e

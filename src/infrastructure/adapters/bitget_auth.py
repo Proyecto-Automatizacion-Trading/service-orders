@@ -29,3 +29,26 @@ class BitgetAuth(ExchangeAuth):
             'ACCESS-TIMESTAMP': timestamp,
             'Content-Type': 'application/json'
         }
+
+    @staticmethod
+    def generate_signature_debug(timestamp, method, request_path, body, secret):
+        # Mostrar cada componente y su representacion
+        print("Timestamp repr:", repr(timestamp))
+        print("Method repr:", repr(method))
+        print("Request path repr:", repr(request_path))
+        print("Body repr:", repr(body))
+
+        message = timestamp + method + request_path + body
+        print("Concatenated message repr:", repr(message))
+
+        print("Secret repr:", repr(secret))
+
+        print("Length of secret:", len(secret))
+        print("Hex of secret:", secret.encode().hex())
+
+        signature = hmac.new(secret.encode('utf-8'), message.encode('utf-8'), hashlib.sha256).digest()
+        encoded_signature = base64.b64encode(signature).decode('utf-8')
+
+        print("Generated signature:", encoded_signature)
+        print(repr(timestamp), repr(method), repr(request_path), repr(body), repr(secret))
+        return encoded_signature
