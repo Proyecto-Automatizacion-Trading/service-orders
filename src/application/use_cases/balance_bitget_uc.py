@@ -16,7 +16,7 @@ class BalanceBitgetUC(Balance):
         headers = bitget_auth.generate_headers(TimeUtility.get_timestamp_iso8601(), RequestMethods.GET,
                                                PathsBitget.REQUEST_PATH_BALANCE_FUTURES, "",
                                                bitget_auth.get_credentials().get("API_SECRET"))
-        response = await self.connection_bitget.get_balance_bitget(headers, url)
+        response = await self.connection_bitget.get_balance(headers, url)
         if response["data"] is None:
             return 0
         return response["data"][0]["available"]

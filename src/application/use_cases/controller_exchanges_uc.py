@@ -15,7 +15,7 @@ class ControllerExchangesUC:
 
     async def controller_exchanges(self, alert: InputDataTV) -> Response:
         try:
-            return await self.exchanges[alert.exchange].execute_operation(alert, BitgetAuth())
+            return await self.exchanges[alert.exchange].execute_order(alert, BitgetAuth())
         except Exception as e:
             print("Error in Controller Exchanges UC: " + str(e))
             raise HTTPException(status_code=500, detail=f"Error in controller_exchanges: {str(e)}")
