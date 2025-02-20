@@ -1,9 +1,4 @@
-from datetime import datetime
-from ..enums.order_type import OrderType
-from ..enums.position_side import PositionSide
 from pydantic import BaseModel
-
-from ...application.utilities.timeUtility import TimeUtility
 
 
 class Trade(BaseModel):
@@ -16,6 +11,4 @@ class Trade(BaseModel):
     tradeSide: str  # Cambiado de "close" a "open"
     orderType: str
     timeInForceValue: str
-    clientOid: str = TimeUtility.get_timestamp_datetime()
-    leverage: str
-
+    clientOid: str

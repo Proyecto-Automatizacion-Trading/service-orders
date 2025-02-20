@@ -12,3 +12,7 @@ class TimeUtility:
     @staticmethod
     def get_timestamp_datetime() -> str:
         return str(int(datetime.now().timestamp() * 1000))
+
+    @staticmethod
+    def get_timestamp_iso8601() -> str:
+        return datetime.utcnow().isoformat(timespec="milliseconds") + "Z"

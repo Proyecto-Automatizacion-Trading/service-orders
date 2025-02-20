@@ -9,17 +9,18 @@ from typing import Dict
 
 
 class ExchangeAuth(ABC):
+
+    # Retorna las credenciales necesarias para el exchange
     @abstractmethod
     def get_credentials(self) -> Dict[str, str]:
-        # Retorna las credenciales necesarias para el exchange
         pass
 
+    # Retorna la firma necesaria para el exchange
     @abstractmethod
     def generate_signature(self, timestamp, method, request_path, body, secret) -> str:
-        # Retorna la firma necesaria para el exchange
         pass
 
+    # Retorna los headers necesarios para el exchange
     @abstractmethod
     def generate_headers(self, timestamp, method, request_path, body, secret) -> Dict[str, str]:
-        # Retorna los headers necesarios para el exchange
         pass

@@ -3,5 +3,5 @@ from pydantic import BaseModel
 
 class Response(BaseModel):
     statusCode: int
-    data: str
+    data: dict
     valid: bool
