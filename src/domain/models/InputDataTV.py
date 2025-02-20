@@ -6,5 +6,5 @@ class InputDataTV(BaseModel):
     side: str  # Cambiado de "buy" a "sell"
     tradeSide: str  # Cambiado de "close" a "open"
     percentage: bool  # Porcentaje para abrir la orden
-    size: str  # Porcentaje para abrir la orden si es porcentaje, el tamaño de la orden si es tamaño
+    size: float  # Porcentaje para abrir la orden si es porcentaje, el tamaño de la orden si es tamaño
     exchange: str  # Define el exchange en donde se va a ejecutar la operación
