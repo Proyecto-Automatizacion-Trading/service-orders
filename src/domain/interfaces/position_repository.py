@@ -12,7 +12,7 @@ class PositionRepository(ABC):
 
     # Método encargado de gestionar el cierre de una posición
     @abstractmethod
-    async def close_position(self) -> Response:
+    async def close_position(self, total: float, hold_side: str) -> Response:
         pass
 
     # Método principal sobre el cual se ejecutará la operación ya sea de apertura o cierre

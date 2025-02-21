@@ -20,3 +20,7 @@ class ConnectionExchange(ABC):
     @abstractmethod
     async def get_price_token(self, url: str):
         pass
+
+    @abstractmethod
+    async def get_open_position_coin(self, url: str, token: dict) -> dict:
+        pass
