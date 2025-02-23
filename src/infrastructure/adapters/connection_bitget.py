@@ -8,6 +8,16 @@ from src.domain.models.response import Response
 
 class ConnectionBitget(ConnectionExchange):
 
+    async def get_open_position_coin(self, url: str, headers: dict) -> dict:
+        try:
+            response = requests.get(url, headers=headers)
+            print(f"Status Code: {response.status_code}")
+            print(f"Response Bitget: {response.json()}")
+            return response.json()
+        except Exception as e:
+            print(f"Error in get_open_position_coin: {str(e)}")
+            raise e
+
     async def get_price_token(self, url: str) -> dict:
         try:
             response = requests.get(url)
