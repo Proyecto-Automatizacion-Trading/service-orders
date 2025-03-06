@@ -16,6 +16,16 @@ def get_controller_exchanges_uc() -> ControllerExchangesUC:
     return ControllerExchangesUC()
 
 
+@app.get("/")
+async def prueba():
+    return {"status": "200 ok"}
+
+
+@app.get("/webhook/alert/tradingview/")
+async def health_check():
+    return {"status": "ok"}
+
+
 @app.post("/webhook/alert/tradingview/",
           response_model=Response,
           summary="Controla las alertas que llegan de trading view y determina el exchange para ejecutar la orden",
