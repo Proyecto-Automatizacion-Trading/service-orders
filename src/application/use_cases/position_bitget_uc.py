@@ -35,34 +35,31 @@ class PositionBitgetUC(PositionRepository):
         try:
             self.trade_input = trade_input
             self.bitget_auth = bitget_auth
-            balance = await self.balance_uc.get_balance(self.bitget_auth)
-            if await Validations.validate_balance(float(balance)):
-                self.balance = float(balance)
-                url: str = PathsBitget.REQUEST_PATH_GET_OPEN_POSITION_COIN.format(trade_input.symbol)
-                position_validate_coin: PositionValidate = await Validations.validate_position_open_coin(
-                    url, trade_input.symbol, self.connection_bitget, self.bitget_auth)
-                if position_validate_coin.open and position_validate_coin.holdSide == DICT_POSITION_SIDE.get(
-                        trade_input.side):
-                    return await self.close_position(float(position_validate_coin.total),
-                                                     position_validate_coin.holdSide)
-                elif (position_validate_coin.open and position_validate_coin.holdSide != DICT_POSITION_SIDE.get(
-                        trade_input.side)) or not position_validate_coin.open:
-                    if position_validate_coin.open:
-                        await self.close_position(float(position_validate_coin.total), position_validate_coin.holdSide)
-                    return await self.open_position()
-                else:
-                    print("Invalid execute_order: " + position_validate_coin.json())
-                    raise HTTPException(status_code=400,
-                                        detail=f"Invalid execute_order: {position_validate_coin.json()}")
+            self.balance = float(await self.balance_uc.get_balance(self.bitget_auth))
+            url: str = PathsBitget.REQUEST_PATH_GET_OPEN_POSITION_COIN.format(trade_input.symbol)
+            position_validate_coin: PositionValidate = await Validations.validate_position_open_coin(
+                url, trade_input.symbol, self.connection_bitget, self.bitget_auth)
+            if position_validate_coin.open and position_validate_coin.holdSide == DICT_POSITION_SIDE.get(
+                    trade_input.side):
+                return await self.close_position(float(position_validate_coin.total),
+                                                 position_validate_coin.holdSide)
+            elif (position_validate_coin.open and position_validate_coin.holdSide != DICT_POSITION_SIDE.get(
+                    trade_input.side)) or not position_validate_coin.open:
+                if position_validate_coin.open:
+                    await self.close_position(float(position_validate_coin.total), position_validate_coin.holdSide)
+                return await self.open_position()
+            else:
+                print("Invalid execute_order: " + position_validate_coin.json())
+                raise HTTPException(status_code=400,
+                                    detail=f"Invalid execute_order: {position_validate_coin.json()}")
         except Exception as e:
             print(f"Error in execute_order: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error in execute_order: {str(e)}")
 
     async def open_position(self) -> Response:
         if await self.validate_enums(self.trade_input):
-            await self.calculator_bitget.calculate(self.trade_input, self.balance)
-            # Valida si el balance de la operación que se va a abrir si es suficiente
-            if await Validations.validate_balance(self.trade_input.size):
+            response_calculator: Response =  await self.calculator_bitget.calculate(self.trade_input, self.balance)
+            if response_calculator.valid:
                 trade = await self.create_json_trading(self.trade_input, self.trade_input.size, OrderType.OPEN.value,
                                                        self.trade_input.side)
                 body_trade = SerializableUtility.serialize_json(trade.model_dump())
