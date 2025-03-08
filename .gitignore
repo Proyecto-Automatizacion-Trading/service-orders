@@ -1,6 +1,7 @@
 <<<<<<< Updated upstream
 .idea
 config.py
+my_config.py
 *.pyc
 *.so
 =======

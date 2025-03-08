@@ -4,7 +4,7 @@ import hashlib
 import base64
 import json
 import requests
-from config import SECRETS
+from my_config import SECRETS
 
 # Credenciales de acceso
 API_KEY = SECRETS["API_KEY"]
