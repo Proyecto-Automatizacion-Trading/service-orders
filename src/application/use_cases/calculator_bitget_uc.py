@@ -1,6 +1,8 @@
+from src.application.utilities.validations import Validations
 from src.domain.constants.paths_bitget import PathsBitget
 from src.domain.interfaces.calculator import Calculator
 from src.domain.models.InputDataTV import InputDataTV
+from src.domain.models.response import Response
 from src.infrastructure.adapters.connection_bitget import ConnectionBitget
 
 
@@ -20,10 +22,16 @@ class CalculatorBitgetUC(Calculator):
         response = await self.connection_bitget.get_price_token(url)
         return float(response["data"][0]["price"])
 
-    async def calculate(self, trade_input: InputDataTV, balance: float):
+    async def calculate(self, trade_input: InputDataTV, balance: float) -> Response:
         if trade_input.percentage:
             trade_input.size = await self.calculate_percentage(trade_input.size, balance)
 
-        price_token = await self.get_price_token(trade_input.symbol)
-        size_token = await self.convert_equivalent_usdt_to_token(price_token, trade_input.size)
-        trade_input.size = size_token
+        # Valida si el balance de la operación que se va a abrir si es suficiente
+        if await Validations.validate_balance(trade_input.size):
+            price_token = await self.get_price_token(trade_input.symbol)
+            size_token = await self.convert_equivalent_usdt_to_token(price_token, trade_input.size)
+            trade_input.size = size_token
+            return Response(statusCode=200, data={"Status": "Ok"}, valid=True)
+        else:
+            print(f"Error in size: {trade_input.size}")
+            return Response(statusCode=400, data={"Error": f"Undersized {trade_input.size}$"}, valid=False)

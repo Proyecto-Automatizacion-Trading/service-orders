@@ -26,7 +26,7 @@ class Validations:
         if not balance:
             print("Balance is empty")
             raise HTTPException(status_code=400, detail=f"Balance is empty")
-        if balance < 6:
+        if balance < 5.5:
             print("Balance is less than 6")
             raise HTTPException(status_code=400, detail=f"Balance is less than 6")
         return True
