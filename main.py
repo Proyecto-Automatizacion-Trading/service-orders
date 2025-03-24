@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
+from mangum import Mangum
 
 from src.application.use_cases.controller_exchanges_uc import ControllerExchangesUC
 from src.domain.models.InputDataTV import InputDataTV
@@ -51,3 +52,6 @@ if __name__ == "__main__":
         port=8000,
         reload=True
     )
+
+# Adaptador para que funcione en Lambda
+lambda_handler = Mangum(app)
