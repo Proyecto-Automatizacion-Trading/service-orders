@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
 from mangum import Mangum
 
@@ -17,9 +16,9 @@ def get_controller_exchanges_uc() -> ControllerExchangesUC:
     return ControllerExchangesUC()
 
 
-@app.get("/")
-async def prueba():
-    return {"status": "200 ok"}
+@app.get("/lambda")
+async def home():
+    return {"mensaje": "¡Hola desde Trading Fast Lambda!"}
 
 
 @app.get("/webhook/alert/tradingview/")
@@ -44,14 +43,6 @@ async def controller_tradingview_webhook_alert(
             detail=f"Error in controller_tradingview_webhook_alert: {str(e)}"
         )
 
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
-    )
 
 # Adaptador para que funcione en Lambda
 lambda_handler = Mangum(app)
