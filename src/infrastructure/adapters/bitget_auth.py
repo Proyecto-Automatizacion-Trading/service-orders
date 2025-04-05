@@ -3,7 +3,7 @@ import hashlib
 import hmac
 
 from typing import Dict
-from config import SECRETS
+from my_config import SECRETS
 
 from ...domain.interfaces.exchange_auth import ExchangeAuth
 
