@@ -1,4 +1,7 @@
-class ConnectionServiceDatabase:
+from abc import ABC
+
+
+class ConnectionServiceDatabase(ABC):
     def __init__(self):
         pass
 
