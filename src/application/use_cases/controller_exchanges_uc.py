@@ -21,3 +21,6 @@ class ControllerExchangesUC:
         except Exception as e:
             print("Error in Controller Exchanges UC: " + str(e))
             raise HTTPException(status_code=500, detail=f"Error in controller_exchanges: {str(e)}")
+
+    async def controller_alert(self, alert: InputDataTV) -> Response:
+        pass
