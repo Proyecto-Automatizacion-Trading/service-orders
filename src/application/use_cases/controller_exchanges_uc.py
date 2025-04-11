@@ -25,7 +25,7 @@ class ControllerExchangesUC:
             raise HTTPException(status_code=500, detail=f"Error in controller_exchanges: {str(e)}")
 
     async def controller_alert(self, alert: InputDataTV) -> Response:
-        self.get_array_api_keys()
+        apis_keys = await self.get_array_api_keys()
 
     async def get_array_api_keys(self) -> Dict[str, str]:
         return await self.connection_service_database.get_array_api_keys()
