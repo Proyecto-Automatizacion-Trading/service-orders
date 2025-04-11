@@ -1,3 +1,5 @@
+from typing import Dict
+
 from fastapi import HTTPException
 
 from src.application.use_cases.position_bitget_uc import PositionBitgetUC
@@ -25,5 +27,5 @@ class ControllerExchangesUC:
     async def controller_alert(self, alert: InputDataTV) -> Response:
         pass
 
-    async def get_array_api_keys(self):
+    async def get_array_api_keys(self) -> Dict[str, str]:
         return await self.connection_service_database.get_array_api_keys()

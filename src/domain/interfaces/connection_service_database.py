@@ -6,5 +6,5 @@ class ConnectionServiceDatabase(ABC):
         pass
 
     @abstractmethod
-    def get_array_api_keys(self):
+    async def get_array_api_keys(self):
         pass

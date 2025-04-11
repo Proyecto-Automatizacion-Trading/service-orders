@@ -5,5 +5,6 @@ from src.domain.interfaces.connection_service_database import ConnectionServiceD
 
 class ConnectionDB(ConnectionServiceDatabase):
 
-    def get_array_api_keys(self) -> Dict[str, str]:
+    async def get_array_api_keys(self) -> Dict[str, str]:
         pass
+
