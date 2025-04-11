@@ -4,6 +4,7 @@ from src.application.use_cases.position_bitget_uc import PositionBitgetUC
 from src.domain.models import InputDataTV
 from src.domain.models.response import Response
 from src.infrastructure.adapters.bitget_auth import BitgetAuth
+from src.infrastructure.adapters.connection_service_database import ConnectionServiceDatabase
 
 
 class ControllerExchangesUC:
@@ -12,6 +13,7 @@ class ControllerExchangesUC:
         self.exchanges = {
             "bitget": PositionBitgetUC(),
         }
+        self.connection_service_database = ConnectionServiceDatabase()
 
     async def controller_exchanges(self, alert: InputDataTV) -> Response:
         try:
