@@ -24,3 +24,6 @@ class ControllerExchangesUC:
 
     async def controller_alert(self, alert: InputDataTV) -> Response:
         pass
+
+    async def get_array_api_keys(self):
+        return await self.connection_service_database.get_array_api_keys()
