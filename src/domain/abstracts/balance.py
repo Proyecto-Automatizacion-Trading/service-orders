@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.domain.interfaces.exchange_auth import ExchangeAuth
+from src.domain.abstracts.exchange_auth import ExchangeAuth
 
 
 class Balance(ABC):

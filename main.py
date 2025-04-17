@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from mangum import Mangum
 
-from src.application.use_cases.controller_exchanges_uc import ControllerExchangesUC
+from src.application.handlers.operations_handler import OperationsHandler
 from src.domain.models.InputDataTV import InputDataTV
 from src.domain.models.response import Response
 
@@ -12,8 +12,8 @@ app = FastAPI(
 )
 
 
-def get_controller_exchanges_uc() -> ControllerExchangesUC:
-    return ControllerExchangesUC()
+def get_operations_handler() -> OperationsHandler:
+    return OperationsHandler()
 
 
 @app.get("/lambda")
@@ -33,16 +33,28 @@ async def health_check():
           )
 async def controller_tradingview_webhook_alert(
         alert: InputDataTV,
-        controller: ControllerExchangesUC = Depends(get_controller_exchanges_uc)
+        controller: OperationsHandler = Depends(get_operations_handler)
 ):
     try:
-        return await controller.controller_exchanges(alert)
+        return await controller.positions_handler(alert)
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Error in controller_tradingview_webhook_alert: {str(e)}"
         )
 
+
+@app.get("/handler/health")
+async def health_check(controller: OperationsHandler = Depends(get_operations_handler)):
+    api_keys = await controller.get_array_api_keys()
+    print(api_keys)
+    return {"status": "ok", "api_keys": api_keys}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 # Adaptador para que funcione en Lambda
 lambda_handler = Mangum(app)

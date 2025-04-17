@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from ..models.response import Response
 from ..models.InputDataTV import InputDataTV
-from ..interfaces.exchange_auth import ExchangeAuth
+from ..abstracts.exchange_auth import ExchangeAuth
 
 
 class PositionRepository(ABC):

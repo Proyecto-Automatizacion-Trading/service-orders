@@ -1,7 +1,11 @@
-from src.domain.interfaces.connection_service_database import ConnectionServiceDatabase
+from typing import List
+
+from src.domain.abstracts.connection_service_database import ConnectionServiceDatabase
+from src.domain.models.exchangeApiKeyModel import ExchangeApiKeyModel
+from my_config import SECRETS
 
 
 class ConnectionDB(ConnectionServiceDatabase):
 
-    def get_array_api_keys(self):
-        pass
+    async def get_array_api_keys(self) -> List[ExchangeApiKeyModel]:
+        return SECRETS

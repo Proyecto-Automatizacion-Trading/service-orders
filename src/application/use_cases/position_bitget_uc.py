@@ -8,7 +8,7 @@ from .balance_bitget_uc import BalanceBitgetUC
 from .calculator_bitget_uc import CalculatorBitgetUC
 from ...domain.constants.dicts.dict_position_side import DICT_POSITION_SIDE
 from ...domain.enums.order_type import OrderType
-from ...domain.interfaces.position_repository import PositionRepository
+from ...domain.abstracts.position_repository import PositionRepository
 from ...domain.models.positionValidate import PositionValidate
 from ...domain.models.trade import Trade
 from ...domain.models.response import Response

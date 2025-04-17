@@ -3,8 +3,8 @@ from fastapi import HTTPException
 from src.application.utilities.timeUtility import TimeUtility
 from src.domain.constants.paths_bitget import PathsBitget
 from src.domain.constants.request_methods import RequestMethods
-from src.domain.interfaces.connection_exchange import ConnectionExchange
-from src.domain.interfaces.exchange_auth import ExchangeAuth
+from src.domain.abstracts.connection_exchange import ConnectionExchange
+from src.domain.abstracts.exchange_auth import ExchangeAuth
 from src.domain.models.positionValidate import PositionValidate
 
 

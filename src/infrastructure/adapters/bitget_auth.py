@@ -5,7 +5,7 @@ import hmac
 from typing import Dict
 from my_config import SECRETS
 
-from ...domain.interfaces.exchange_auth import ExchangeAuth
+from ...domain.abstracts.exchange_auth import ExchangeAuth
 
 
 class BitgetAuth(ExchangeAuth):

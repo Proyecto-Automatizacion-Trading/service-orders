@@ -1,7 +1,7 @@
 from src.application.utilities.timeUtility import TimeUtility
 from src.domain.constants.paths_bitget import PathsBitget
 from src.domain.constants.request_methods import RequestMethods
-from src.domain.interfaces.balance import Balance
+from src.domain.abstracts.balance import Balance
 from src.infrastructure.adapters.bitget_auth import BitgetAuth
 from src.infrastructure.adapters.connection_bitget import ConnectionBitget
 

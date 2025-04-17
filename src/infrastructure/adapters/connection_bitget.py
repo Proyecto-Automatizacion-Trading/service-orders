@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from src.domain.interfaces.connection_exchange import ConnectionExchange
+from src.domain.abstracts.connection_exchange import ConnectionExchange
 from src.domain.models.response import Response
 
 
