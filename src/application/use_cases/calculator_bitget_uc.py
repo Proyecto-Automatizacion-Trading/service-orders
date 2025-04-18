@@ -1,6 +1,6 @@
 from src.application.utilities.validations import Validations
 from src.domain.constants.paths_bitget import PathsBitget
-from src.domain.abstracts.calculator import Calculator
+from src.domain.abstracts.calculator_repository import Calculator
 from src.domain.models.InputDataTV import InputDataTV
 from src.domain.models.response import Response
 from src.infrastructure.adapters.connection_bitget import ConnectionBitget

@@ -1,6 +1,6 @@
 from typing import List
 
-from src.domain.abstracts.connection_service_database import ConnectionServiceDatabase
+from src.domain.abstracts.connection_service_database_repository import ConnectionServiceDatabase
 from src.domain.models.exchangeApiKeyModel import ExchangeApiKeyModel
 from my_config import SECRETS
 
