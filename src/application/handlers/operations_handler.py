@@ -22,22 +22,27 @@ class OperationsHandler:
     async def positions_handler(self, alert: InputDataTV) -> Response:
         try:
             arrays_api_keys = await self.get_array_api_keys()
-            print(f"Number of API keys: {len(arrays_api_keys)}")
-            print(f"API keys: {arrays_api_keys}")
             async with aiohttp.ClientSession() as session:
                 tasks = [
                     self.send_orders(alert, exchange_api_key)
                     for exchange_api_key in arrays_api_keys
                 ]
-                response = await asyncio.gather(*tasks)
-            return Response(statusCode=200, data=response, valid=True)
+                responses = await asyncio.gather(*tasks)
+            formatted_responses = {
+                f"order_{i}": {
+                    "statusCode": resp.statusCode,
+                    "data": resp.data,
+                    "valid": resp.valid
+                }
+                for i, resp in enumerate(responses)
+            }
+            return Response(statusCode=200, data=formatted_responses, valid=all(r.valid for r in responses))
         except Exception as e:
             print("Error in OperationsHandler: " + str(e))
             raise HTTPException(status_code=500, detail=f"Error in operations_handler: {str(e)}")
 
     async def send_orders(self, data_alert: InputDataTV, exchange_api_key: ExchangeApiKeyModel) -> Response:
-        print("exchange: " + exchange_api_key.get("exchange"))
-        return await self.exchanges[exchange_api_key.get("exchange")].execute_order(data_alert,  exchange_api_key)
+        return await self.exchanges[exchange_api_key.get("exchange")].execute_order(data_alert, exchange_api_key)
 
     async def controller_alert(self, alert: InputDataTV) -> Response:
         pass

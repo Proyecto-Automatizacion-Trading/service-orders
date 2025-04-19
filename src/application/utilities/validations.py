@@ -63,14 +63,14 @@ class Validations:
             url: str, token: str, connection_exchange: ConnectionExchange, exchange_auth: ExchangeAuth,
             exchange_api_key: ExchangeApiKeyModel) -> PositionValidate:
         """
-        Valida si la posición de un token está abierta en la API de Bitget.
+        Valida si la posición de un token está abierta en la API del exchange.
 
         Args:
         url (str): URL para la petición de la posición abierta
         token (str): Símbolo del token a validar
-        connection_exchange (ConnectionExchange): Instancia de la conexión a la API de Bitget
-        exchange_auth (ExchangeAuth): Instancia de la autenticación para la API de Bitget
-        exchange_api_key (ExchangeApiKeyModel): Modelo de la llave de la API de Bitget
+        connection_exchange (ConnectionExchange): Instancia de la conexión a la API del exchange
+        exchange_auth (ExchangeAuth): Instancia de la autenticación para la API del exchange
+        exchange_api_key (ExchangeApiKeyModel): Modelo de la llave de la API del exchange
 
         Returns:
         PositionValidate: Objeto con la información de la posición abierta.
