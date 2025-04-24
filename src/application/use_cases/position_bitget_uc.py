@@ -1,5 +1,6 @@
 from typing import Optional
 
+import aiohttp
 from fastapi import HTTPException
 
 from src.domain.constants.request_methods import RequestMethods
@@ -32,25 +33,26 @@ class PositionBitgetUC(PositionRepository):
         self.calculator_bitget: CalculatorBitgetUC = CalculatorBitgetUC()
         self.balance = 0.0
 
-    async def execute_order(self, trade_input: InputDataTV, exchange_api_key: ExchangeApiKeyModel) -> Response:
+    async def execute_order(self, trade_input: InputDataTV, exchange_api_key: ExchangeApiKeyModel,
+                            session: aiohttp.ClientSession) -> Response:
         try:
             if self.bitget_auth is not None:
                 self.bitget_auth.set_exchange_api_key(exchange_api_key)
             self.trade_input = trade_input
-            self.balance = float(await self.balance_uc.get_balance(self.bitget_auth, exchange_api_key))
+            self.balance = float(await self.balance_uc.get_balance(self.bitget_auth, exchange_api_key, session))
             url: str = PathsBitget.REQUEST_PATH_GET_OPEN_POSITION_COIN.format(trade_input.symbol)
             position_validate_coin: PositionValidate = await Validations.validate_position_open_coin(
-                url, trade_input.symbol, self.connection_bitget, self.bitget_auth, exchange_api_key)
+                url, trade_input.symbol, self.connection_bitget, self.bitget_auth, exchange_api_key, session)
             if position_validate_coin.open and position_validate_coin.holdSide == DICT_POSITION_SIDE.get(
                     trade_input.side):
                 return await self.close_position(float(position_validate_coin.total),
-                                                 position_validate_coin.holdSide, exchange_api_key)
+                                                 position_validate_coin.holdSide, exchange_api_key, session)
             elif (position_validate_coin.open and position_validate_coin.holdSide != DICT_POSITION_SIDE.get(
                     trade_input.side)) or not position_validate_coin.open:
                 if position_validate_coin.open:
                     await self.close_position(float(position_validate_coin.total), position_validate_coin.holdSide,
-                                              exchange_api_key)
-                return await self.open_position(exchange_api_key)
+                                              exchange_api_key, session)
+                return await self.open_position(exchange_api_key, session)
             else:
                 print("Invalid execute_order: " + position_validate_coin.json())
                 raise HTTPException(status_code=400,
@@ -59,26 +61,28 @@ class PositionBitgetUC(PositionRepository):
             print(f"Error in execute_order: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error in execute_order: {str(e)}")
 
-    async def open_position(self, exchange_api_key: ExchangeApiKeyModel) -> Response:
+    async def open_position(self, exchange_api_key: ExchangeApiKeyModel, session: aiohttp.ClientSession) -> Response:
         if await self.validate_enums(self.trade_input):
-            response_calculator: Response = await self.calculator_bitget.calculate(self.trade_input, self.balance)
+            response_calculator: Response = await self.calculator_bitget.calculate(self.trade_input, self.balance,
+                                                                                   exchange_api_key, session)
             if response_calculator.valid:
-                trade = await self.create_json_trading(self.trade_input, self.trade_input.size, OrderType.OPEN.value,
-                                                       self.trade_input.side)
+                trade = await self.create_json_trading(self.trade_input, exchange_api_key.get("size"),
+                                                       OrderType.OPEN.value, self.trade_input.side)
                 body_trade = SerializableUtility.serialize_json(trade.model_dump())
                 url = PathsBitget.PATH_BITGET + PathsBitget.REQUEST_PATH_FUTURES
                 headers = self.bitget_auth.generate_headers(TimeUtility.get_timestamp(), RequestMethods.POST,
                                                             PathsBitget.REQUEST_PATH_FUTURES, body_trade,
                                                             exchange_api_key.get("api_secret"))
-                return await self.connection_bitget.execute_operation(body_trade, headers, url)
+                return await self.connection_bitget.execute_operation(body_trade, headers, url, session)
             else:
-                print(f"Error in size: {self.trade_input.size}")
-                return Response(statusCode=400, data={"Error": f"Undersized {self.trade_input.size}$"}, valid=False)
+                print(f"Error in size: {exchange_api_key['size']}")
+                return Response(statusCode=400, data={"Error": f"Undersized {exchange_api_key['size']}$"}, valid=False)
         else:
             print(f"Error in side: {self.trade_input.side}")
             return Response(statusCode=400, data={"Error": "Error in side"}, valid=False)
 
-    async def close_position(self, total: float, hold_side: str, exchange_api_key: ExchangeApiKeyModel) -> Response:
+    async def close_position(self, total: float, hold_side: str, exchange_api_key: ExchangeApiKeyModel,
+                             session: aiohttp.ClientSession) -> Response:
         if await self.validate_enums(self.trade_input):
             trade = await self.create_json_trading(self.trade_input, total, OrderType.CLOSE.value,
                                                    await self.get_key_from_value(DICT_POSITION_SIDE, hold_side))
@@ -87,7 +91,7 @@ class PositionBitgetUC(PositionRepository):
             headers = self.bitget_auth.generate_headers(TimeUtility.get_timestamp(), RequestMethods.POST,
                                                         PathsBitget.REQUEST_PATH_FUTURES, body_trade,
                                                         exchange_api_key.get("api_secret"))
-            return await self.connection_bitget.execute_operation(body_trade, headers, url)
+            return await self.connection_bitget.execute_operation(body_trade, headers, url, session)
         else:
             print(f"Error in side or tradeSide: {self.trade_input.side} - {self.trade_input.tradeSide}")
             return Response(statusCode=400, data={"Error": "Error in side or tradeSide"}, valid=False)

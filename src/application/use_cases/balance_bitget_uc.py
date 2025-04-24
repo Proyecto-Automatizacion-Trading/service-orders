@@ -1,3 +1,5 @@
+import aiohttp
+
 from src.application.utilities.timeUtility import TimeUtility
 from src.domain.constants.paths_bitget import PathsBitget
 from src.domain.constants.request_methods import RequestMethods
@@ -12,12 +14,13 @@ class BalanceBitgetUC(Balance):
     def __init__(self):
         self.connection_bitget: ConnectionBitget = ConnectionBitget()
 
-    async def get_balance(self, bitget_auth: BitgetAuth, exchange_api_key: ExchangeApiKeyModel) -> float:
+    async def get_balance(self, bitget_auth: BitgetAuth, exchange_api_key: ExchangeApiKeyModel,
+                          session: aiohttp.ClientSession) -> float:
         url = PathsBitget.PATH_BITGET + PathsBitget.REQUEST_PATH_BALANCE_FUTURES
         headers = bitget_auth.generate_headers(TimeUtility.get_timestamp_iso8601(), RequestMethods.GET,
                                                PathsBitget.REQUEST_PATH_BALANCE_FUTURES, "",
                                                exchange_api_key.get("api_secret"))
-        response = await self.connection_bitget.get_balance(headers, url)
+        response = await self.connection_bitget.get_balance(headers, url, session)
         if response["data"] is None:
             return 0
         return response["data"][0]["available"]

@@ -1,3 +1,4 @@
+import aiohttp
 from fastapi import HTTPException
 
 from src.application.utilities.timeUtility import TimeUtility
@@ -61,7 +62,7 @@ class Validations:
     @staticmethod
     async def validate_position_open_coin(
             url: str, token: str, connection_exchange: ConnectionExchange, exchange_auth: ExchangeAuth,
-            exchange_api_key: ExchangeApiKeyModel) -> PositionValidate:
+            exchange_api_key: ExchangeApiKeyModel, session: aiohttp.ClientSession) -> PositionValidate:
         """
         Valida si la posición de un token está abierta en la API del exchange.
 
@@ -71,6 +72,7 @@ class Validations:
         connection_exchange (ConnectionExchange): Instancia de la conexión a la API del exchange
         exchange_auth (ExchangeAuth): Instancia de la autenticación para la API del exchange
         exchange_api_key (ExchangeApiKeyModel): Modelo de la llave de la API del exchange
+        session (aiohttp.ClientSession): Sesión HTTP usada para interactuar con la API del exchange
 
         Returns:
         PositionValidate: Objeto con la información de la posición abierta.
@@ -79,7 +81,7 @@ class Validations:
             headers = exchange_auth.generate_headers(TimeUtility.get_timestamp_iso8601(), RequestMethods.GET, url, "",
                                                      exchange_api_key.get('api_secret'))
             url_request = PathsBitget.PATH_BITGET + url
-            response = await connection_exchange.get_open_position_coin(url_request, headers)
+            response = await connection_exchange.get_open_position_coin(url_request, headers, session)
             if response["data"] is None or len(response["data"]) == 0:
                 return PositionValidate(symbol=token, open=False, holdSide="", total="")
             return PositionValidate(symbol=token, open=True, holdSide=response["data"][0]["holdSide"],

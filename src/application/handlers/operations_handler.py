@@ -11,6 +11,21 @@ from src.domain.models.response import Response
 from src.infrastructure.adapters.connection_db import ConnectionDB
 
 
+def format_response(response: Response):
+    if isinstance(response, Exception):
+        return {
+            "statusCode": 500,
+            "data": str(response),
+            "valid": False
+        }
+    else:
+        return {
+            "statusCode": response.statusCode,
+            "data": response.data,
+            "valid": response.valid
+        }
+
+
 class OperationsHandler:
 
     def __init__(self):
@@ -24,25 +39,23 @@ class OperationsHandler:
             arrays_api_keys = await self.get_array_api_keys()
             async with aiohttp.ClientSession() as session:
                 tasks = [
-                    self.send_orders(alert, exchange_api_key)
+                    self.send_orders(alert, exchange_api_key, session)
                     for exchange_api_key in arrays_api_keys
                 ]
-                responses = await asyncio.gather(*tasks)
-            formatted_responses = {
-                f"order_{i}": {
-                    "statusCode": resp.statusCode,
-                    "data": resp.data,
-                    "valid": resp.valid
-                }
-                for i, resp in enumerate(responses)
-            }
+                responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+            formatted_responses = {}
+            for i, resp in enumerate(responses):
+                formatted_responses[f"order_{i}"] = format_response(resp)
             return Response(statusCode=200, data=formatted_responses, valid=all(r.valid for r in responses))
         except Exception as e:
             print("Error in OperationsHandler: " + str(e))
             raise HTTPException(status_code=500, detail=f"Error in operations_handler: {str(e)}")
 
-    async def send_orders(self, data_alert: InputDataTV, exchange_api_key: ExchangeApiKeyModel) -> Response:
-        return await self.exchanges[exchange_api_key.get("exchange")].execute_order(data_alert, exchange_api_key)
+    async def send_orders(self, data_alert: InputDataTV, exchange_api_key: ExchangeApiKeyModel,
+                          session: aiohttp.ClientSession) -> Response:
+        return await self.exchanges[exchange_api_key.get("exchange")].execute_order(data_alert, exchange_api_key,
+                                                                                    session)
 
     async def controller_alert(self, alert: InputDataTV) -> Response:
         pass
