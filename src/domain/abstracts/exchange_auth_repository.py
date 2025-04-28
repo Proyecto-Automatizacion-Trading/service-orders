@@ -30,7 +30,7 @@ class ExchangeAuth(ABC):
 
     @abstractmethod
     def generate_headers(self, timestamp: str, method: str, request_path: str, body: str,
-                         secret: str) -> Dict[str, str]:
+                         secret: str, exchange_api_key: ExchangeApiKeyModel) -> Dict[str, str]:
         """
         Genera los headers necesarios para el exchange.
 
@@ -40,6 +40,7 @@ class ExchangeAuth(ABC):
             request_path (str): Ruta de la petición.
             body (str): Cuerpo de la petición.
             secret (str): Clave secreta del exchange.
+            exchange_api_key (ExchangeApiKeyModel): Clave de la API del exchange.
 
         Returns:
             Dict[str, str]: Diccionario con los headers necesarios

@@ -10,10 +10,9 @@ class ConnectionBitget(ConnectionExchange):
 
     async def get_open_position_coin(self, url: str, headers: dict, session: aiohttp.ClientSession) -> dict:
         try:
-            print("Obteniendo Posiciones Bitget..." + "--" * 10)
             async with session.get(url, headers=headers) as response:
                 data = await response.json()
-            print(f"Status Code: {response.status}")
+            print(f"Status Code Position: {response.status}")
             print(f"Response Position Bitget: {data}")
             return data
         except Exception as e:
@@ -22,10 +21,9 @@ class ConnectionBitget(ConnectionExchange):
 
     async def get_price_token(self, url: str, session: aiohttp.ClientSession) -> dict:
         try:
-            print("Obteniendo Precio Token Bitget..." + "--" * 10)
             async with session.get(url) as response:
                 data = await response.json()
-            print(f"Status Code: {response.status}")
+            print(f"Status Code Price Token: {response.status}")
             print(f"Response Price Token Bitget: {data}")
             return data
         except Exception as e:
@@ -35,10 +33,9 @@ class ConnectionBitget(ConnectionExchange):
     async def execute_operation(self, body_order: json, headers: dict, url: str,
                                 session: aiohttp.ClientSession) -> Response:
         try:
-            print("Enviando Orden Bitget..." + "--" * 10)
             async with session.post(url, headers=headers, data=body_order) as response:
                 data = await response.json()
-            print(f"Status Code: {response.status}")
+            print(f"Status Code Execute Order: {response.status}")
             print(f"Response Execute Bitget: {data}")
             if response.status == 200:
                 return Response(statusCode=response.status, data=data, valid=True)
@@ -49,10 +46,9 @@ class ConnectionBitget(ConnectionExchange):
 
     async def get_balance(self, headers: dict, url: str, session: aiohttp.ClientSession) -> dict:
         try:
-            print("Obteniendo Balance Bitget..." + "--" * 10)
             async with session.get(url, headers=headers) as response:
                 data = await response.json()
-            print(f"Status Code: {response.status}")
+            print(f"Status Code Balance: {response.status}")
             print(f"Response Balance Bitget: {data}")
             return data
         except Exception as e:

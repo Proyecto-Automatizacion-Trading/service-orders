@@ -36,8 +36,6 @@ class PositionBitgetUC(PositionRepository):
     async def execute_order(self, trade_input: InputDataTV, exchange_api_key: ExchangeApiKeyModel,
                             session: aiohttp.ClientSession) -> Response:
         try:
-            if self.bitget_auth is not None:
-                self.bitget_auth.set_exchange_api_key(exchange_api_key)
             self.trade_input = trade_input
             self.balance = float(await self.balance_uc.get_balance(self.bitget_auth, exchange_api_key, session))
             url: str = PathsBitget.REQUEST_PATH_GET_OPEN_POSITION_COIN.format(trade_input.symbol)
@@ -72,7 +70,8 @@ class PositionBitgetUC(PositionRepository):
                 url = PathsBitget.PATH_BITGET + PathsBitget.REQUEST_PATH_FUTURES
                 headers = self.bitget_auth.generate_headers(TimeUtility.get_timestamp(), RequestMethods.POST,
                                                             PathsBitget.REQUEST_PATH_FUTURES, body_trade,
-                                                            exchange_api_key.get("api_secret"))
+                                                            exchange_api_key.get("secret"), exchange_api_key)
+                print(f"Body Order: {body_trade}")
                 return await self.connection_bitget.execute_operation(body_trade, headers, url, session)
             else:
                 print(f"Error in size: {exchange_api_key['size']}")
@@ -90,7 +89,7 @@ class PositionBitgetUC(PositionRepository):
             url = PathsBitget.PATH_BITGET + PathsBitget.REQUEST_PATH_FUTURES
             headers = self.bitget_auth.generate_headers(TimeUtility.get_timestamp(), RequestMethods.POST,
                                                         PathsBitget.REQUEST_PATH_FUTURES, body_trade,
-                                                        exchange_api_key.get("api_secret"))
+                                                        exchange_api_key.get("secret"), exchange_api_key)
             return await self.connection_bitget.execute_operation(body_trade, headers, url, session)
         else:
             print(f"Error in side or tradeSide: {self.trade_input.side} - {self.trade_input.tradeSide}")

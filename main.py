@@ -44,13 +44,6 @@ async def controller_tradingview_webhook_alert(
         )
 
 
-@app.get("/handler/health")
-async def health_check(controller: OperationsHandler = Depends(get_operations_handler)):
-    api_keys = await controller.get_array_api_keys()
-    print(api_keys)
-    return {"status": "ok", "api_keys": api_keys}
-
-
 if __name__ == "__main__":
     import uvicorn
 

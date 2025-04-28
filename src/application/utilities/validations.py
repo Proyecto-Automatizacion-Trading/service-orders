@@ -79,7 +79,7 @@ class Validations:
         """
         try:
             headers = exchange_auth.generate_headers(TimeUtility.get_timestamp_iso8601(), RequestMethods.GET, url, "",
-                                                     exchange_api_key.get('api_secret'))
+                                                     exchange_api_key.get('secret'), exchange_api_key)
             url_request = PathsBitget.PATH_BITGET + url
             response = await connection_exchange.get_open_position_coin(url_request, headers, session)
             if response["data"] is None or len(response["data"]) == 0:

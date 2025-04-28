@@ -11,19 +11,17 @@ from ...domain.models.exchangeApiKeyModel import ExchangeApiKeyModel
 
 class BitgetAuth(ExchangeAuth):
 
-    def __init__(self):
-        self.exchange_api_key = None
-
     def generate_signature(self, timestamp, method, request_path, body, secret) -> str:
         message = timestamp + method + request_path + body
         signature = hmac.new(secret.encode(), message.encode(), hashlib.sha256).digest()
         return base64.b64encode(signature).decode()
 
-    def generate_headers(self, timestamp, method, request_path, body, secret) -> Dict[str, str]:
+    def generate_headers(self, timestamp, method, request_path, body, secret,
+                         exchange_api_key: ExchangeApiKeyModel) -> Dict[str, str]:
         return {
-            'ACCESS-KEY': self.get_exchange_api_key().get('api_key'),
+            'ACCESS-KEY': exchange_api_key.get("api_key"),
             'ACCESS-SIGN': self.generate_signature(timestamp, method, request_path, body, secret),
-            'ACCESS-PASSPHRASE': self.get_exchange_api_key().get('api_passphrase'),
+            'ACCESS-PASSPHRASE': exchange_api_key.get("passphrase"),
             'ACCESS-TIMESTAMP': timestamp,
             'Content-Type': 'application/json'
         }
@@ -50,9 +48,3 @@ class BitgetAuth(ExchangeAuth):
         print("Generated signature:", encoded_signature)
         print(repr(timestamp), repr(method), repr(request_path), repr(body), repr(secret))
         return encoded_signature
-
-    def set_exchange_api_key(self, exchange_api_key: ExchangeApiKeyModel) -> None:
-        self.exchange_api_key = exchange_api_key
-
-    def get_exchange_api_key(self) -> ExchangeApiKeyModel:
-        return self.exchange_api_key
