@@ -43,6 +43,22 @@ async def controller_tradingview_webhook_alert(
             detail=f"Error in controller_tradingview_webhook_alert: {str(e)}"
         )
 
+@app.post("/webhook/alert/tradingview/qa",
+          response_model=Response,
+          summary="Controla las alertas que llegan de trading view y determina el exchange para ejecutar la orden",
+          description="Recibe alertas de TradingView y ejecuta operaciones en los distintos exchange"
+          )
+async def controller_tradingview_webhook_alert(
+        alert: InputDataTV,
+        controller: OperationsHandler = Depends(get_operations_handler)
+):
+    try:
+        return await controller.positions_handler(alert)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error in controller_tradingview_webhook_alert: {str(e)}"
+        )
 
 if __name__ == "__main__":
     import uvicorn
