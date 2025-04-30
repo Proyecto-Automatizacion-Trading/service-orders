@@ -58,9 +58,6 @@ class OperationsHandler:
         exchange_api_key["is_percentage"] = True
         return await self.exchanges[exchange].execute_order(data_alert, exchange_api_key, session)
 
-    async def controller_alert(self, alert: InputDataTV) -> Response:
-        pass
-
     async def get_array_api_keys(self, input_data_tv: InputDataTV) -> List[ExchangeApiKeyModel]:
         try:
             return await self.connection_service_database.get_array_api_keys(input_data_tv)

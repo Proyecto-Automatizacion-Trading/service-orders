@@ -24,5 +24,5 @@ class ConnectionDB(ConnectionServiceDatabase):
 
     @staticmethod
     def build_api_url(temporality, strategy, symbol):
-        base_url = "https://fast-trading.duckdns.org/api/v1/usuarios/apikeys"
+        base_url = "https://apigo.lat:443/api/v1/usuarios/apikeys"
         return f"{base_url}?temporalidad={temporality}&estrategia={strategy}&moneda={symbol}"

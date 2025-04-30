@@ -38,7 +38,7 @@ class CalculatorBitgetUC(Calculator):
             return Response(statusCode=200, data={"Status": "Ok"}, valid=True)
         else:
             print(f"Error in size: {exchange_api_key['size']}")
-            return Response(statusCode=400, data={"Error": f"Undersized {exchange_api_key['size']}$"}, valid=False)
+            raise Exception(Response(statusCode=400, data={"Error": f"Undersized {exchange_api_key['size']}$"}, valid=False))
 
     @staticmethod
     def update_size(exchange_api_key: ExchangeApiKeyModel, size: float) -> None:
