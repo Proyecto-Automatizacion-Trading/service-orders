@@ -43,14 +43,4 @@ class Calculator(ABC):
 
     @abstractmethod
     async def calculate_percentage(self, percentage: float, balance: float) -> float:
-        """
-        Calcula el porcentaje de un saldo dado.
-
-        Parámetros:
-        percentage (float): El porcentaje a calcular.
-        balance (float): El saldo del cual se desea calcular el porcentaje.
-
-        Retorna:
-        float: El porcentaje calculado.
-        """
         pass
