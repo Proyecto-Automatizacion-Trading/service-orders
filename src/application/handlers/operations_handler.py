@@ -38,15 +38,16 @@ class OperationsHandler:
         try:
             arrays_api_keys = await self.get_array_api_keys(alert)
             formatted_responses = {}
-            for credentials_exchange in arrays_api_keys["data"]:
-                async with aiohttp.ClientSession() as session:
-                    tasks = [
-                        self.send_orders(alert, exchange_api_key, session, credentials_exchange["Exchange"])
-                        for exchange_api_key in credentials_exchange["APIKeys"]
-                    ]
-                    responses = await asyncio.gather(*tasks, return_exceptions=True)
-                for i, resp in enumerate(responses):
-                    formatted_responses[f"order_{i}"] = format_response(resp)
+            if arrays_api_keys["data"] is not None:
+                for credentials_exchange in arrays_api_keys["data"]:
+                    async with aiohttp.ClientSession() as session:
+                        tasks = [
+                            self.send_orders(alert, exchange_api_key, session, credentials_exchange["Exchange"])
+                            for exchange_api_key in credentials_exchange["APIKeys"]
+                        ]
+                        responses = await asyncio.gather(*tasks, return_exceptions=True)
+                    for i, resp in enumerate(responses):
+                        formatted_responses[f"order_{i}"] = format_response(resp)
             return Response(statusCode=200, data=formatted_responses, valid=all(r.valid for r in responses))
         except Exception as e:
             print("Error in OperationsHandler: " + str(e))
