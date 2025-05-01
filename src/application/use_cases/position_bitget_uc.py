@@ -52,7 +52,7 @@ class PositionBitgetUC(PositionRepository):
                                               exchange_api_key, session)
                 return await self.open_position(exchange_api_key, session)
             else:
-                print("Invalid execute_order: " + position_validate_coin.json())
+                print("Invalid execute_order: " + position_validate_coin.model_dump_json())
                 raise HTTPException(status_code=400,
                                     detail=f"Invalid execute_order: {position_validate_coin.model_dump_json()}")
         except Exception as e:
