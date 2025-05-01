@@ -28,7 +28,17 @@ class Calculator(ABC):
         pass
 
     @abstractmethod
-    async def convert_equivalent_usdt_to_token(self, price_token: float, size_usdt: float) -> float:
+    async def convertir_equivalente_usdt_a_token(self, precio_token: float, monto_usdt: float) -> float:
+        """
+        Convierte el monto equivalente en USDT al monto correspondiente en tokens según el precio del token proporcionado.
+
+        Parámetros:
+        precio_token (float): El precio de un solo token.
+        monto_usdt (float): El monto en USDT a ser convertido.
+
+        Retorna:
+        float: El monto equivalente en tokens.
+        """
         pass
 
     @abstractmethod
