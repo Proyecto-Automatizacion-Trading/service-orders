@@ -15,6 +15,16 @@ class Calculator(ABC):
 
     @abstractmethod
     async def get_price_token(self, symbol: str, session: aiohttp.ClientSession) -> float:
+        """
+        Obtiene el precio actual del token con el símbolo dado.
+
+        Parámetros:
+        symbol (str): El símbolo del token.
+        session (aiohttp.ClientSession): La sesión aiohttp a utilizar.
+
+        Retorna:
+        float: El precio actual del token.
+        """
         pass
 
     @abstractmethod
