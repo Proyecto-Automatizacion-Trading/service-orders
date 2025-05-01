@@ -54,7 +54,7 @@ class PositionBitgetUC(PositionRepository):
             else:
                 print("Invalid execute_order: " + position_validate_coin.json())
                 raise HTTPException(status_code=400,
-                                    detail=f"Invalid execute_order: {position_validate_coin.json()}")
+                                    detail=f"Invalid execute_order: {position_validate_coin.model_dump_json()}")
         except Exception as e:
             print(f"Error in execute_order: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error in execute_order: {str(e)}")
