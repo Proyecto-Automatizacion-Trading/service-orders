@@ -54,6 +54,8 @@ class OperationsHandler:
 
     async def send_orders(self, data_alert: InputDataTV, exchange_api_key: ExchangeApiKeyModel,
                           session: aiohttp.ClientSession, exchange: str) -> Response:
+        if exchange_api_key is None:
+            raise HTTPException(status_code=400, detail="No API Key found")
         exchange_api_key["size"] = 50
         exchange_api_key["is_percentage"] = True
         return await self.exchanges[exchange].execute_order(data_alert, exchange_api_key, session)
