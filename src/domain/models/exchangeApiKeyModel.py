@@ -1,6 +1,3 @@
-from pydantic import BaseModel
-
-
-class ExchangeApiKeyModel(BaseModel):
-    apiKey: str
-    exchange: str
+class ExchangeApiKeyModel(dict):
+    def __init__(self, **kwargs):
+        super().__init__(kwargs)

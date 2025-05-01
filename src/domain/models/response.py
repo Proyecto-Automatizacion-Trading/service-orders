@@ -1,7 +1,9 @@
+from typing import Union, Dict, List
+
 from pydantic import BaseModel
 
 
 class Response(BaseModel):
     statusCode: int
-    data: dict
+    data: Union[Dict, List]
     valid: bool

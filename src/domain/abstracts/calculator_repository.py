@@ -1,15 +1,20 @@
 from abc import ABC, abstractmethod
 
+import aiohttp
+
 from src.domain.models.InputDataTV import InputDataTV
+from src.domain.models.exchangeApiKeyModel import ExchangeApiKeyModel
+from src.domain.models.response import Response
 
 
 class Calculator(ABC):
     @abstractmethod
-    async def calculate(self, trade_input: InputDataTV, balance: float):
+    async def calculate(self, trade_input: InputDataTV, balance: float,
+                        exchange_api_key: ExchangeApiKeyModel, session: aiohttp.ClientSession) -> Response:
         pass
 
     @abstractmethod
-    async def get_price_token(self, symbol: str):
+    async def get_price_token(self, symbol: str, session: aiohttp.ClientSession) -> float:
         pass
 
     @abstractmethod
