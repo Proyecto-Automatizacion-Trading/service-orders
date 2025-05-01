@@ -44,3 +44,7 @@ class Calculator(ABC):
     @abstractmethod
     async def calculate_percentage(self, percentage: float, balance: float) -> float:
         pass
+
+
+
+
