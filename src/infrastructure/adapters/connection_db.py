@@ -15,6 +15,9 @@ class ConnectionDB(ConnectionServiceDatabase):
             print("Obteniendo Datos BD..." + "--" * 10)
             url = self.build_api_url(input_data_tv.temporality, input_data_tv.strategy, input_data_tv.symbol)
             response = requests.get(url)
+            if response.status_code != 200:
+                print(f"Status Code BD: {response.status_code}")
+                raise Exception
             data = response.json()
             print(f"Status Code BD: {response.status_code}")
             return data
